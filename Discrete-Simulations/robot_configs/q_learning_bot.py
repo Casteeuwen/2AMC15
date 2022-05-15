@@ -6,10 +6,10 @@ materials = {0: 'cell_clean', -1: 'cell_wall', -2: 'cell_obstacle', -3: 'cell_ro
               -5: 'cell_robot_s', -6: 'cell_robot_w', 1: 'cell_dirty', 2: 'cell_goal', 3: 'cell_death'}
 wind_directions = ['n', 'e', 's', 'w']
 alpha = 0.1
-gamma = 0.8
-epsilon = 0.2
-num_episodes = 5000
-max_num_steps = 2
+gamma = 0.85
+epsilon = 0.15
+num_episodes = 3000
+max_num_steps = 30
 
 def get_epsilon_q_choice(q_table, pos, epsilon):
   directions = q_table[pos[0], pos[1]]
@@ -33,7 +33,8 @@ def robot_epoch(actual_robot):
   for episode in range(num_episodes):
     # Initialize robot at current (real location)
     robot = copy.deepcopy(actual_robot)
-    old_empty_count = 0
+    # old_empty_count = 0
+    old_dirty_count = np.count_nonzero(robot.grid.cells==1)
     for step in range(max_num_steps):
       #?::::Take action given the epsilon-greedy policy::::
       # Get best choice given agents' current location, epsilon greedy
@@ -52,9 +53,12 @@ def robot_epoch(actual_robot):
       
       # Calculate the reward for the previous action
       # TODO expand this past simply counting clean cells
-      new_empty_count =  np.count_nonzero(robot.grid.cells==0)
-      reward = float(new_empty_count - old_empty_count) - 2.0
-      old_empty_count = new_empty_count
+      # new_empty_count =  np.count_nonzero(robot.grid.cells==0)
+      # reward = float(new_empty_count - old_empty_count) - 2.0
+      # old_empty_count = new_empty_count
+      new_dirty_count = np.count_nonzero(robot.grid.cells==1)
+      reward = float(old_dirty_count - new_dirty_count - 0.3)
+      old_dirty_count = new_dirty_count
 
       # print(f'new: {robot.pos} vibe {materials[robot.grid.cells[robot.pos]]}')
       # Update Q-table 
