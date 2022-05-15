@@ -1,9 +1,6 @@
 import copy 
 import numpy as np
 
-simple_reward_map = {-6:-2,-5:-2,-4:-2 ,-3:-2,-2: -9, -1: -9, 0: -2 , 1: 2, 2: 4, 3: -1}
-materials = {0: 'cell_clean', -1: 'cell_wall', -2: 'cell_obstacle', -3: 'cell_robot_n', -4: 'cell_robot_e',
-              -5: 'cell_robot_s', -6: 'cell_robot_w', 1: 'cell_dirty', 2: 'cell_goal', 3: 'cell_death'}
 wind_directions = ['n', 'e', 's', 'w']
 alpha = 0.15
 gamma = 0.85
