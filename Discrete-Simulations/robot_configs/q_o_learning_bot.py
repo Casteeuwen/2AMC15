@@ -7,27 +7,27 @@ materials = {0: 'cell_clean', -1: 'cell_wall', -2: 'cell_obstacle', -3: 'cell_ro
 wind_directions = ['n', 'e', 's', 'w']
 alpha = 0.15
 gamma = 0.85
-epsilon = 0.15
-num_episodes = 450 # 1000
+epsilon = 0.06 # 0.15
+num_episodes = 450 # 450 
 max_num_steps = 30
 
 
-def get_epsilon_q_choice(q_table, pos, epsilon):
-  directions = q_table[pos[0], pos[1]]
+def get_epsilon_q_choice(q_table, pos, epsilon, orientation):
+  directions = q_table[pos[0], pos[1], wind_directions.index(orientation)]
   direction = int(np.argmax(directions))
   random = np.random.binomial(1, epsilon)
   if random == 1 or np.all((directions == 0)):
     direction = int(np.random.choice([0,1,2,3]))
   return direction
 
-def update_q_table(q_table, old_pos, choice, new_pos, reward, alpha, gamma):
-  q_table[old_pos[0], old_pos[1], choice] = q_table[old_pos[0], old_pos[1], choice] * (1 - alpha) + \
-    alpha * (reward + gamma * np.max(q_table[new_pos[0], new_pos[1], :]))
+def update_q_table(q_table, old_pos, old_orientation, choice, new_pos, new_orientation, reward, alpha, gamma):
+  q_table[old_pos[0], old_pos[1], wind_directions.index(old_orientation) ,choice] = q_table[old_pos[0], old_pos[1], wind_directions.index(old_orientation), choice] * (1 - alpha) + \
+    alpha * (reward + gamma * np.max(q_table[new_pos[0], new_pos[1], wind_directions.index(new_orientation), :]))
   return q_table 
 
 def robot_epoch(actual_robot):
   # Initialize Q table
-  q_table =  np.zeros((actual_robot.grid.n_cols, actual_robot.grid.n_rows, 4))
+  q_table =  np.zeros((actual_robot.grid.n_cols, actual_robot.grid.n_rows, 4 ,4))
 
   # Run episodes
   #! On actual board implementation
@@ -39,10 +39,10 @@ def robot_epoch(actual_robot):
     for step in range(max_num_steps):
       #?::::Take action given the epsilon-greedy policy::::
       # Get best choice given agents' current location, epsilon greedy
-      choice = get_epsilon_q_choice(q_table, robot.pos, epsilon)
+      choice = get_epsilon_q_choice(q_table, robot.pos, epsilon, robot.orientation)
 
       old_location = copy.copy(robot.pos)
-
+      old_orientation = copy.copy(robot.orientation)
       # Move agent
       # TODO build check to see if it has died, exit this episode in that case
       while wind_directions[choice] != robot.orientation:
@@ -56,9 +56,9 @@ def robot_epoch(actual_robot):
       old_dirty_count = new_dirty_count
 
       # Update Q-table 
-      q_table = update_q_table(q_table, old_location, choice, robot.pos, reward, alpha, gamma)
+      q_table = update_q_table(q_table, old_location, old_orientation, choice, robot.pos, robot.orientation, reward, alpha, gamma)
 
-  choice = get_epsilon_q_choice(q_table, actual_robot.pos, 0.0)
+  choice = get_epsilon_q_choice(q_table, actual_robot.pos, 0.0, actual_robot.orientation)
   while wind_directions[choice] != actual_robot.orientation:
     actual_robot.rotate('r')
   actual_robot.move()
