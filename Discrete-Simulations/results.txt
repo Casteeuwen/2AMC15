@@ -1,0 +1,15 @@
+q_o example-random-house-0.grid 0.3 100 98.88888888888889 10.227272727272728 
+q_o example-random-house-0.grid 0.3 250 100.0 10.227272727272728 
+q_o example-random-house-0.grid 0.8 50 89.0 64.77272727272727 
+q_o example-random-house-0.grid 0.8 50 100.0 10.227272727272728 
+q_o example-random-level.grid 0.8 50 100.0 10.16949152542373 
+q_loc example-random-house-0.grid 0.8 50 100.0 10.227272727272728 
+q_loc example-random-level.grid 0.8 50 100.0 10.16949152542373 
+q_o example-random-house-0.grid 0.8 50 100.0 10.227272727272728 
+q_o example-random-level.grid 0.8 50 99.66329966329967 10.16949152542373 
+q_loc example-random-house-0.grid 0.8 50 100.0 10.227272727272728 
+q_loc example-random-level.grid 0.8 50 100.0 10.16949152542373 
+q_o example-random-house-0.grid 0.8 50 100.0 10.227272727272728 
+q_o example-random-level.grid 0.8 50 100.0 10.16949152542373 
+q_loc example-random-house-0.grid 0.8 50 100.0 10.227272727272728 
+q_o example-random-house-0.grid 0.3 250 65.44117647058823 81.81818181818183 

@@ -3,10 +3,13 @@ import numpy as np
 
 wind_directions = ['n', 'e', 's', 'w']
 alpha = 0.15
-gamma = 0.85
+my_gamma = 0.85
 epsilon = 0.15
-num_episodes = 450 # 1000
+my_num_episodes = 450 # 1000
 max_num_steps = 30
+
+def get_name():
+  return 'q_loc'
 
 def get_epsilon_q_choice(q_table, pos, epsilon):
   directions = q_table[pos[0], pos[1]]
@@ -21,7 +24,7 @@ def update_q_table(q_table, old_pos, choice, new_pos, reward, alpha, gamma):
     alpha * (reward + gamma * np.max(q_table[new_pos[0], new_pos[1], :]))
   return q_table 
 
-def robot_epoch(actual_robot):
+def robot_epoch(actual_robot, gamma = my_gamma, num_episodes = my_num_episodes):
   # Initialize Q table
   q_table =  np.zeros((actual_robot.grid.n_cols, actual_robot.grid.n_rows, 4))
 
@@ -64,4 +67,4 @@ def robot_epoch(actual_robot):
   while wind_directions[choice] != actual_robot.orientation:
     actual_robot.rotate('r')
   actual_robot.move()
-  print(actual_robot.orientation)
+  # print(actual_robot.orientation)
