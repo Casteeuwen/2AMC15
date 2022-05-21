@@ -4,9 +4,9 @@ import numpy as np
 wind_directions = ['n', 'e', 's', 'w']
 alpha = 0.15
 gamma = 0.85
-epsilon = 0.06 # 0.15
+epsilon = 0.06 # 0.06
 num_episodes = 450 # 450 
-max_num_steps = 30
+max_num_steps = 55 # 30
 
 
 def get_epsilon_q_choice(q_table, pos, epsilon, orientation):
@@ -36,20 +36,27 @@ def robot_epoch(actual_robot):
     for step in range(max_num_steps):
       #?::::Take action given the epsilon-greedy policy::::
       # Get best choice given agents' current location, epsilon greedy
-      choice = get_epsilon_q_choice(q_table, robot.pos, epsilon, robot.orientation)
+      decayrate = 1 - step/max_num_steps
+      decayed_epsilon = epsilon * decayrate
+
+      choice = get_epsilon_q_choice(q_table, robot.pos, decayed_epsilon, robot.orientation)
 
       old_location = copy.copy(robot.pos)
       old_orientation = copy.copy(robot.orientation)
       # Move agent
-      # TODO build check to see if it has died, exit this episode in that case
+      if actual_robot.alive == False:
+        break
+
+
       while wind_directions[choice] != robot.orientation:
         robot.rotate('r')
       robot.move()
       
       # Calculate the reward for the previous action
       # TODO expand this past simply counting clean cells (must be done for implementations with other tiles like goal tiles)
+      new_goal_count = np.count_nonzero(robot.grid.cells==2)
       new_dirty_count = np.count_nonzero(robot.grid.cells==1)
-      reward = float(old_dirty_count - new_dirty_count - 0.2)
+      reward = float(new_goal_count + old_dirty_count - new_dirty_count - 0.2)
       old_dirty_count = new_dirty_count
 
       # Update Q-table 
